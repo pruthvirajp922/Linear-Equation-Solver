@@ -41,6 +41,7 @@
             max-width: 620px;
             width: 100%;
             border: 1px solid rgba(255, 255, 255, 0.08);
+            box-sizing: border-box;
         }
 
         h2 {
@@ -86,16 +87,18 @@
             min-width: 40px;
         }
 
+        /* DEFAULT: Desktop single-row structure */
         .inputs-grid {
             display: grid;
-            grid-template-columns: auto auto auto auto auto auto auto;
+            grid-template-columns: repeat(7, auto);
             align-items: center;
             gap: 8px;
             flex-grow: 1;
         }
 
         input[type="number"] {
-            width: 62px;
+            width: 100%;
+            max-width: 65px;
             padding: 12px 6px;
             background-color: rgba(31, 40, 51, 0.9);
             border: 1px solid var(--border-color);
@@ -233,6 +236,100 @@
             color: var(--text-muted);
             font-weight: 700;
         }
+
+        /* MOBILE ADAPTATION: Shifts structure smoothly under 600px widths */
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px 16px;
+            }
+
+            .equation-box {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 16px;
+            }
+
+            .inputs-grid {
+                width: 100%;
+                /* Restructures layout into two clean micro-rows inside the card */
+                grid-template-columns: repeat(4, 1fr) auto repeat(2, 1fr);
+                grid-template-areas: 
+                    "a var1 op b"
+                    ". . equals c";
+                gap: 10px 6px;
+            }
+
+            /* Explicitly mapping grid components for structural safety */
+            .inputs-grid input:nth-of-type(1) { grid-area: a; max-width: 100%; }
+            .inputs-grid select:nth-of-type(1) { grid-area: var1; width: 100%; }
+            .inputs-grid select:nth-of-type(2) { grid-area: op; width: 100%; }
+            .inputs-grid input:nth-of-type(2) { grid-area: b; max-width: 100%; }
+            .inputs-grid select:nth-of-type(3) { grid-area: var2; width: 100%; visibility: hidden; display: none; } /* Handled implicitly on mobile grid line constraints */
+            .inputs-grid .equals-sign { grid-area: equals; padding: 0 4px; }
+            .inputs-grid input:nth-of-type(3) { grid-area: c; max-width: 100%; }
+            
+            /* Structural patch for custom four-column selection distribution on mobile */
+            .inputs-grid {
+                grid-template-columns: 2fr 1.5fr 1.2fr 2fr;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+
+            .inputs-grid input[type="number"], 
+            .inputs-grid select {
+                max-width: none;
+                flex: 1 1 auto;
+            }
+
+            .inputs-grid input:nth-of-type(1),
+            .inputs-grid select:nth-of-type(1),
+            .inputs-grid select:nth-of-type(2),
+            .inputs-grid input:nth-of-type(2),
+            .inputs-grid select:nth-of-type(3) {
+                width: calc(20% - 4px);
+                min-width: 48px;
+            }
+
+            .inputs-grid .equals-sign {
+                width: 5%;
+                text-align: center;
+            }
+
+            .inputs-grid input:nth-of-type(3) {
+                width: 15%;
+                min-width: 55px;
+            }
+            
+            .inputs-grid {
+                display: flex;
+                flex-wrap: nowrap;
+                gap: 5px;
+            }
+            
+            /* Final micro-scaling fallback for ultra-narrow smartphone portrait viewports */
+            @media (max-width: 440px) {
+                .inputs-grid {
+                    display: grid;
+                    grid-template-columns: repeat(4, 1fr);
+                    gap: 8px;
+                }
+                .inputs-grid input:nth-of-type(3) {
+                    grid-column: span 3;
+                }
+                .inputs-grid .equals-sign {
+                    grid-column: span 1;
+                    text-align: center;
+                }
+            }
+
+            .formula-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -328,30 +425,20 @@ function updateFormula() {
         `Solving: [a1]${v1_1} ${op1} [b1]${v1_2} = c1  and  [a2]${v2_1} ${op2} [b2]${v2_2} = c2`;
 }
 
-// Helper: Greatest Common Divisor (Euclidean Algorithm)
 function getGCD(a, b) {
     return b === 0 ? Math.abs(a) : getGCD(b, a % b);
 }
 
-// Converts a numerator and denominator into a simplified fraction string
 function formatAsFraction(num, den) {
     if (num === 0) return "0";
-    
-    // Manage negative signs cleanly
     if (den < 0) {
         num = -num;
         den = -den;
     }
-    
     const gcd = getGCD(num, den);
     const simplifiedNum = num / gcd;
     const simplifiedDen = den / gcd;
-    
-    // If denominator simplifies to 1, return it as a integer
-    if (simplifiedDen === 1) {
-        return `${simplifiedNum}`;
-    }
-    
+    if (simplifiedDen === 1) return `${simplifiedNum}`;
     return `${simplifiedNum}/${simplifiedDen}`;
 }
 
@@ -398,7 +485,6 @@ function solveSystem() {
     if (op1 === '-') b1 = -b1;
     if (op2 === '-') b2 = -b2;
 
-    // Determinants calculated as integer/float numerators
     const D = (a1 * b2) - (b1 * a2);
     const Dx = (c1 * b2) - (b1 * c2);
     const Dy = (a1 * c2) - (c1 * a2);
@@ -406,7 +492,6 @@ function solveSystem() {
     resultDiv.style.display = "block";
     
     if (D !== 0) {
-        // Convert the values directly into reduced fraction text blocks
         const fractionX = formatAsFraction(Dx, D);
         const fractionY = formatAsFraction(Dy, D);
         
