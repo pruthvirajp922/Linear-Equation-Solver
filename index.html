@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Linear Equation Solver</title>
+    <title>Advanced Equation Solver Pro</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
     <style>
         :root {
-            --card-bg: rgba(31, 40, 51, 0.65);
-            --input-bg: rgba(21, 26, 33, 0.8);
+            --card-bg: rgba(22, 28, 45, 0.45);
+            --input-bg: rgba(13, 17, 28, 0.75);
             --text-main: #ffffff;
-            --text-muted: #a370f7; 
-            --border-color: rgba(44, 53, 64, 0.7);
-            --accent-yellow: #ffc107;
+            --text-muted: #94a3b8; 
+            --border-color: rgba(255, 255, 255, 0.12);
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: radial-gradient(circle at 80% 20%, #1a103c 0%, transparent 40%),
-                        radial-gradient(circle at 15% 80%, #0d2030 0%, transparent 45%),
-                        #05070a;
+            background: linear-gradient(135deg, #0f4c81 0%, #1e1b4b 40%, #4c1d95 100%);
             background-attachment: fixed;
             color: var(--text-main);
             display: flex;
@@ -33,172 +33,114 @@
         .container {
             background-color: var(--card-bg);
             padding: 40px;
-            border-radius: 28px;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 
-                        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45), 
+                        inset 0 1px 1px rgba(255, 255, 255, 0.15);
             max-width: 620px;
             width: 100%;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-color);
             box-sizing: border-box;
         }
 
         h2 {
             text-align: center;
-            font-size: 1.9rem;
+            font-size: 2.1rem;
             margin-top: 0;
             margin-bottom: 5px;
             font-weight: 700;
             letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #ffffff 0%, #b8c1ec 100%);
+            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         p.subtitle {
             text-align: center;
-            color: #8b9bb4;
+            color: #94a3b8;
             font-size: 0.95rem;
             margin-bottom: 35px;
         }
 
         .equation-box {
             background: var(--input-bg);
-            padding: 20px;
+            padding: 16px 20px;
             border-radius: 18px;
             border: 1px solid var(--border-color);
-            margin-bottom: 16px;
+            margin-bottom: 18px;
             display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: border-color 0.3s ease;
+            flex-direction: column;
+            gap: 8px;
+            transition: all 0.3s ease;
         }
 
         .equation-box:focus-within {
-            border-color: rgba(163, 112, 247, 0.4);
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
         }
 
-        .eq-tag {
-            font-size: 0.85rem;
-            color: #718096;
+        .eq-label {
+            font-size: 0.8rem;
+            color: #38bdf8;
             font-weight: 700;
             text-transform: uppercase;
-            min-width: 40px;
+            letter-spacing: 0.5px;
         }
 
-        /* DESKTOP GRID */
-        .inputs-grid {
-            display: grid;
-            grid-template-columns: repeat(7, auto);
-            align-items: center;
-            gap: 8px;
-            flex-grow: 1;
-        }
-
-        input[type="text"] {
+        .manual-input {
             width: 100%;
-            max-width: 65px;
-            padding: 12px 4px;
-            background-color: rgba(31, 40, 51, 0.9);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            text-align: center;
-            font-size: 1.05rem;
-            color: var(--text-main);
-            font-weight: bold;
-            transition: all 0.2s ease;
-            box-sizing: border-box;
-        }
-
-        input[type="text"]:focus {
-            border-color: var(--text-muted);
-            background-color: #1f2833;
+            background: transparent;
+            border: none;
             outline: none;
-            box-shadow: 0 0 0 3px rgba(163, 112, 247, 0.2);
-        }
-
-        select {
-            padding: 12px 8px;
-            background-color: rgba(31, 40, 51, 0.9);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
             color: var(--text-main);
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-            padding-right: 24px;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%238b9bb4'><path d='M0 3l5 5 5-5z'/></svg>");
-            background-repeat: no-repeat;
-            background-position: right 8px center;
-            transition: all 0.2s ease;
-            box-sizing: border-box;
-        }
-
-        select:focus {
-            border-color: var(--text-muted);
-            outline: none;
-        }
-
-        select.variable-select {
-            color: #4ea8de;
-            min-width: 52px;
-            text-align: center;
-        }
-
-        .equals-sign {
             font-size: 1.2rem;
-            color: #8b9bb4;
-            font-weight: bold;
-            text-align: center;
-            min-width: 15px;
+            font-weight: 600;
+            padding: 4px 0;
+            font-family: inherit;
+        }
+
+        .manual-input::placeholder {
+            color: rgba(148, 163, 184, 0.45);
         }
 
         button {
             width: 100%;
             padding: 16px;
-            background: linear-gradient(135deg, #7928ca 0%, #4ea8de 100%);
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
             color: white;
             border: none;
-            border-radius: 16px;
+            border-radius: 14px;
             font-size: 1.1rem;
-            font-weight: 700;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.25s ease;
-            margin-top: 15px;
-            box-shadow: 0 4px 15px rgba(121, 40, 202, 0.3);
+            margin-top: 10px;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.25);
         }
 
         button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(121, 40, 202, 0.4);
-            filter: brightness(1.1);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 24px rgba(59, 130, 246, 0.35);
+            filter: brightness(1.08);
         }
 
-        .formula-bar {
-            background-color: var(--input-bg);
-            border: 1px solid var(--border-color);
+        .syntax-guide {
+            background-color: rgba(13, 17, 28, 0.4);
+            border: 1px dashed rgba(255, 255, 255, 0.08);
             border-radius: 14px;
-            padding: 14px 18px;
+            padding: 14px;
             margin-top: 25px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            font-size: 0.9rem;
-            color: #a0aec0;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            line-height: 1.6;
         }
 
-        .formula-badge {
-            background-color: var(--accent-yellow);
-            color: #000;
-            font-weight: 800;
-            font-size: 0.75rem;
-            padding: 4px 10px;
-            border-radius: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .syntax-title {
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
         }
 
         #result {
@@ -213,69 +155,41 @@
         }
 
         .success {
-            background-color: rgba(40, 167, 69, 0.12);
-            color: #4cd137;
-            border: 1px solid rgba(40, 167, 69, 0.3);
+            background-color: rgba(34, 197, 94, 0.12);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            text-align: left !important;
+            padding-left: 24px !important;
         }
 
         .error {
-            background-color: rgba(220, 53, 69, 0.12);
-            color: #ff4d4d;
-            border: 1px solid rgba(220, 53, 69, 0.3);
+            background-color: rgba(239, 68, 68, 0.12);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.25);
         }
 
         .footer {
             text-align: center;
             margin-top: 35px;
-            font-size: 1.05rem;
-            color: #8b9bb4;
-            letter-spacing: 0.5px;
+            font-size: 1rem;
+            color: #94a3b8;
         }
 
-        .footer span {
-            color: var(--text-muted);
+        /* Matches your name perfectly with the vibrant UI button gradient */
+        .footer-name {
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             font-weight: 700;
+            display: inline-block;
         }
 
-        /* AUTO-SHIFT MOBILE LAYOUT */
         @media (max-width: 600px) {
             .container {
                 padding: 25px 16px;
             }
-
-            .equation-box {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 12px;
-                padding: 16px;
-            }
-
-            .inputs-grid {
-                width: 100%;
-                display: grid;
-                grid-template-columns: repeat(4, 1fr); 
-                gap: 10px 8px;
-            }
-
-            .inputs-grid .equals-sign {
-                grid-column: 2 / 3;
-                text-align: center;
-            }
-
-            .inputs-grid input[type="text"]:nth-of-type(3) {
-                grid-column: 3 / 5;
-                max-width: 100%;
-            }
-
-            input[type="text"], select {
-                max-width: none !important;
-                width: 100%;
-            }
-
-            .formula-bar {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
+            h2 {
+                font-size: 1.75rem;
             }
         }
     </style>
@@ -283,126 +197,43 @@
 <body>
 
 <div class="container">
-    <h2>Linear Equation Solver</h2>
-    <p class="subtitle">System of equations solver</p>
+    <h2>Equation Solver Pro</h2>
+    <p class="subtitle">Supports System, Quadratics & Non-Linear Products</p>
 
     <div class="equation-box">
-        <div class="eq-tag">Eq 1</div>
-        <div class="inputs-grid">
-            <input type="text" id="a1" value="3" placeholder="a1">
-            <select id="v1_1" class="variable-select" onchange="updateFormula()"></select>
-            
-            <select id="op1" onchange="updateFormula()">
-                <option value="+">+</option>
-                <option value="-">-</option>
-            </select>
-            
-            <input type="text" id="b1" value="2" placeholder="b1">
-            <select id="v1_2" class="variable-select" onchange="updateFormula()"></select>
-            
-            <span class="equals-sign">=</span>
-            <input type="text" id="c1" value="5/2" placeholder="c1">
-        </div>
+        <div class="eq-label">Equation 1</div>
+        <input type="text" id="eq1" class="manual-input" placeholder="e.g., 7x - 2y = 5xy" value="7x - 2y = 5xy">
     </div>
 
     <div class="equation-box">
-        <div class="eq-tag">Eq 2</div>
-        <div class="inputs-grid">
-            <input type="text" id="a2" value="1/3" placeholder="a2">
-            <select id="v2_1" class="variable-select" onchange="updateFormula()"></select>
-            
-            <select id="op2" onchange="updateFormula()">
-                <option value="+">+</option>
-                <option value="-">-</option>
-            </select>
-            
-            <input type="text" id="b2" value="3" placeholder="b2">
-            <select id="v2_2" class="variable-select" onchange="updateFormula()"></select>
-            
-            <span class="equals-sign">=</span>
-            <input type="text" id="c2" value="-4/3" placeholder="c2">
-        </div>
+        <div class="eq-label">Equation 2</div>
+        <input type="text" id="eq2" class="manual-input" placeholder="e.g., 8x + 7y = 15xy" value="8x + 7y = 15xy">
     </div>
 
-    <button onclick="solveSystem()">Solve System</button>
+    <button onclick="processSystem()">Solve System</button>
 
     <div id="result"></div>
 
-    <div class="formula-bar">
-        <span class="formula-badge">Formula</span>
-        <span id="formula_text">Processing layout variables...</span>
+    <div class="syntax-guide">
+        <div class="syntax-title">💡 Supported Expression Guide:</div>
+        • <strong>System with products:</strong> <code style="color: #38bdf8;">7x - 2y = 5xy</code><br>
+        • <strong>Powers & Fractions:</strong> <code style="color: #38bdf8;">x^2 + 1/2*y = 5</code> or <code style="color: #38bdf8;">y^3 - 9 = 0</code><br>
+        • <strong>Standard Forms:</strong> <code style="color: #38bdf8;">3x + 2y = 5/2</code>
     </div>
 
     <div class="footer">
-        Made by <span>Pruthviraj Patil</span>
+        Made by <span class="footer-name">Pruthviraj Patil</span>
     </div>
 </div>
 
 <script>
-const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
-const dropdownIds = ['v1_1', 'v1_2', 'v2_1', 'v2_2'];
-
-window.onload = function() {
-    dropdownIds.forEach(id => {
-        const selectEl = document.getElementById(id);
-        alphabet.forEach(letter => {
-            let opt = document.createElement('option');
-            opt.value = letter;
-            opt.textContent = letter;
-            
-            if((id === 'v1_1' || id === 'v2_1') && letter === 'x') opt.selected = true;
-            if((id === 'v1_2' || id === 'v2_2') && letter === 'y') opt.selected = true;
-            
-            selectEl.appendChild(opt);
-        });
-    });
-    
-    updateFormula();
-};
-
-function updateFormula() {
-    const v1_1 = document.getElementById('v1_1').value;
-    const v1_2 = document.getElementById('v1_2').value;
-    const v2_1 = document.getElementById('v2_1').value;
-    const v2_2 = document.getElementById('v2_2').value;
-    
-    const op1 = document.getElementById('op1').value;
-    const op2 = document.getElementById('op2').value;
-
-    document.getElementById('formula_text').textContent = 
-        `Solving: [a1]${v1_1} ${op1} [b1]${v1_2} = c1  and  [a2]${v2_1} ${op2} [b2]${v2_2} = c2`;
-}
-
-function parseFractionOrValue(inputStr) {
-    inputStr = inputStr.trim();
-    if (!inputStr) return NaN;
-    
-    if (inputStr.includes('/')) {
-        const parts = inputStr.split('/');
-        if (parts.length !== 2) return NaN;
-        
-        const num = parseFloat(parts[0]);
-        const den = parseFloat(parts[1]);
-        
-        if (isNaN(num) || isNaN(den) || den === 0) return NaN;
-        return num / den;
-    }
-    
-    return parseFloat(inputStr);
-}
-
-function getGCD(a, b) {
-    return b === 0 ? Math.abs(a) : getGCD(b, a % b);
-}
-
-// FIXED ALGORITHM: Added Continued Fraction algorithm to handle accurate floating-point scaling
 function formatAsFraction(decimalVal) {
-    if (Math.abs(decimalVal) < 1e-9) return "0";
+    if (Math.abs(decimalVal) < 1e-7) return "0";
+    if (Math.abs(decimalVal - Math.round(decimalVal)) < 1e-7) return `${Math.round(decimalVal)}`;
     
     let sign = decimalVal < 0 ? "-" : "";
     let val = Math.abs(decimalVal);
     
-    // Finds precision limits dynamically up to a maximum denominator of 10,000
     let h1 = 1, h2 = 0, k1 = 0, k2 = 1;
     let b = val;
     do {
@@ -410,77 +241,119 @@ function formatAsFraction(decimalVal) {
         let aux = h1; h1 = a * h1 + h2; h2 = aux;
         aux = k1; k1 = a * k1 + k2; k2 = aux;
         b = 1 / (b - a);
-    } while (Math.abs(val - h1 / k1) > 1e-9);
+        if (k1 > 10000) break;
+    } while (Math.abs(val - h1 / k1) > 1e-7);
     
     if (k1 === 1) return `${sign}${h1}`;
     return `${sign}${h1}/${k1}`;
 }
 
-function solveSystem() {
-    let a1 = parseFractionOrValue(document.getElementById('a1').value);
-    let b1 = parseFractionOrValue(document.getElementById('b1').value);
-    const c1 = parseFractionOrValue(document.getElementById('c1').value);
+function normalizeEquationString(str) {
+    let parts = str.split('=');
+    if (parts.length !== 2) return null;
     
-    let a2 = parseFractionOrValue(document.getElementById('a2').value);
-    let b2 = parseFractionOrValue(document.getElementById('b2').value);
-    const c2 = parseFractionOrValue(document.getElementById('c2').value);
+    let left = parts[0].trim();
+    let right = parts[1].trim();
+    
+    function addImplicitMultiplication(expr) {
+        return expr
+            .replace(/([0-9]+)([a-zA-Z])/g, '$1*$2')
+            .replace(/([a-zA-Z])([a-zA-Z])/g, '$1*$2');
+    }
+    
+    return `${addImplicitMultiplication(left)} - (${addImplicitMultiplication(right)})`;
+}
 
-    const op1 = document.getElementById('op1').value;
-    const op2 = document.getElementById('op2').value;
-
-    const v1_1 = document.getElementById('v1_1').value;
-    const v1_2 = document.getElementById('v1_2').value;
-    const v2_1 = document.getElementById('v2_1').value;
-    const v2_2 = document.getElementById('v2_2').value;
-
+function processSystem() {
+    const rawEq1 = document.getElementById('eq1').value;
+    const rawEq2 = document.getElementById('eq2').value;
     const resultDiv = document.getElementById('result');
-
-    if (isNaN(a1) || isNaN(b1) || isNaN(c1) || isNaN(a2) || isNaN(b2) || isNaN(c2)) {
-        resultDiv.className = "error";
-        resultDiv.style.display = "block";
-        resultDiv.innerHTML = "⚠️ Invalid values. You can use whole numbers or fractions.";
-        return;
-    }
-
-    if (v1_1 === v1_2 || v2_1 === v2_2) {
-        resultDiv.className = "error";
-        resultDiv.style.display = "block";
-        resultDiv.innerHTML = "⚠️ An equation cannot have duplicate variables.";
-        return;
-    }
-
-    if (v1_1 !== v2_1 || v1_2 !== v2_2) {
-        resultDiv.className = "error";
-        resultDiv.style.display = "block";
-        resultDiv.innerHTML = "⚠️ Variable alignment mismatch!";
-        return;
-    }
-
-    if (op1 === '-') b1 = -b1;
-    if (op2 === '-') b2 = -b2;
-
-    const D = (a1 * b2) - (b1 * a2);
-    const Dx = (c1 * b2) - (b1 * c2);
-    const Dy = (a1 * c2) - (c1 * a2);
-
+    
     resultDiv.style.display = "block";
     
-    if (Math.abs(D) > 1e-9) {
-        // Now calling the updated Continued Fractions formatter directly with the calculated decimal
-        const fractionX = formatAsFraction(Dx / D);
-        const fractionY = formatAsFraction(Dy / D);
-        
-        resultDiv.className = "success";
-        resultDiv.innerHTML = `✨ <strong>Solution Found:</strong><br>
-                               ${v1_1} = ${fractionX}<br>
-                               ${v1_2} = ${fractionY}`;
-    } else {
+    const parsedEq1 = normalizeEquationString(rawEq1);
+    const parsedEq2 = normalizeEquationString(rawEq2);
+    
+    if (!parsedEq1 || !parsedEq2) {
         resultDiv.className = "error";
-        if (Math.abs(Dx) < 1e-9 && Math.abs(Dy) < 1e-9) {
-            resultDiv.innerHTML = "<strong>Infinite Solutions</strong><br>Lines completely overlap.";
-        } else {
-            resultDiv.innerHTML = "<strong>No Solution</strong><br>Lines are perfectly parallel.";
+        resultDiv.innerHTML = "⚠️ Invalid syntax. Ensure both equations have a single '=' sign.";
+        return;
+    }
+
+    try {
+        const code1 = math.compile(parsedEq1);
+        const code2 = math.compile(parsedEq2);
+        
+        function solveNewtonRaphson() {
+            let solutions = [];
+            let seeds = [[1, 1], [-1, -1], [2, 0.5], [0.1, 0.1], [-2, 3], [5, 5]];
+            
+            for (let seed of seeds) {
+                let x = seed[0];
+                let y = seed[1];
+                let converged = false;
+                
+                for (let i = 0; i < 100; i++) {
+                    let f1 = code1.evaluate({x: x, y: y});
+                    let f2 = code2.evaluate({x: x, y: y});
+                    
+                    if (Math.abs(f1) < 1e-10 && Math.abs(f2) < 1e-10) {
+                        converged = true;
+                        break;
+                    }
+                    
+                    let h = 1e-6;
+                    let df1_dx = (code1.evaluate({x: x + h, y: y}) - f1) / h;
+                    let df1_dy = (code1.evaluate({x: x, y: y + h}) - f1) / h;
+                    let df2_dx = (code2.evaluate({x: x + h, y: y}) - f2) / h;
+                    let df2_dy = (code2.evaluate({x: x, y: y + h}) - f2) / h;
+                    
+                    let det = df1_dx * df2_dy - df1_dy * df2_dx;
+                    if (Math.abs(det) < 1e-12) break;
+                    
+                    x = x - (f1 * df2_dy - f2 * df1_dy) / det;
+                    y = y - (df1_dx * f2 - df2_dx * f1) / det;
+                }
+                
+                if (converged && !isNaN(x) && !isNaN(y)) {
+                    let duplicate = false;
+                    for (let sol of solutions) {
+                        if (Math.abs(sol.x - x) < 1e-4 && Math.abs(sol.y - y) < 1e-4) {
+                            duplicate = true;
+                            break;
+                        }
+                    }
+                    if (!duplicate) {
+                        solutions.push({x: x, y: y});
+                    }
+                }
+            }
+            return solutions;
         }
+
+        let solutions = solveNewtonRaphson();
+        
+        if (solutions.length === 0) {
+            resultDiv.className = "error";
+            resultDiv.innerHTML = "<strong>No Real Solutions Found</strong><br>Check values or equation structural boundary limits.";
+        } else {
+            resultDiv.className = "success";
+            let outHTML = `✨ <strong>Solution(s) Found:</strong><br><hr style='border:0; border-top:1px solid rgba(255,255,255,0.1); margin:10px 0;'>`;
+            solutions.forEach((sol, idx) => {
+                let displayX = formatAsFraction(sol.x);
+                let displayY = formatAsFraction(sol.y);
+                
+                if (displayX.includes("/") && displayX.length > 9) displayX = sol.x.toFixed(4);
+                if (displayY.includes("/") && displayY.length > 9) displayY = sol.y.toFixed(4);
+
+                outHTML += `<div style='margin-bottom:12px;'><strong>Set ${idx + 1}:</strong><br>x = ${displayX}<br>y = ${displayY}</div>`;
+            });
+            resultDiv.innerHTML = outHTML;
+        }
+
+    } catch (err) {
+        resultDiv.className = "error";
+        resultDiv.innerHTML = "⚠️ <strong>Math Processing Error</strong><br>Verify your variables match (use x and y) and check operators.";
     }
 }
 </script>
